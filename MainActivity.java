@@ -16,8 +16,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        TextView txt = (TextView) findViewById(R.id.result);
-        txt.setMovementMethod(new ScrollingMovementMethod());
     }
 
     public void run(View v){
@@ -25,9 +23,10 @@ public class MainActivity extends AppCompatActivity {
         int len = 4, exit = 0, y;
         int[] x = new int[len];
         int[][] a = new int[len + 1][len];
+        int[][] a_a = new int[len + 1][len];
         double[] b = new double[len + 1];
-        double ser = 0;
         double[] c = new double[len + 1];
+        double ser = 0;
 
 
         int n;
@@ -45,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         TextView txt = (TextView) findViewById(R.id.result);
+        txt.setMovementMethod(new ScrollingMovementMethod());
         txt.setText("Перше покоління:\n");
 
 
@@ -70,8 +70,11 @@ public class MainActivity extends AppCompatActivity {
                 for (int ii = 0; ii < len; ii++) {
                     b[i] += a[i][ii]*x[ii];
                 }
-                c[i] = b[i];
-                b[i] = Math.abs(b[i] - y);
+                c[i]=b[i];
+                b[i] = b[i] - y;
+                if(b[i]<0)
+                    b[i]*=-1;
+
                 sum += b[i];
 
                 if (b[i] > max) {
@@ -81,21 +84,30 @@ public class MainActivity extends AppCompatActivity {
 
                 if (b[i] == 0)
                     exit = i;
-                koef += 1 / b[i];
+                else
+                    koef += 1 / b[i];
                 //System.out.println(" -- " + koef);
             }
 
 
             //-----------------------------------------------------------
-            //double ll;
+            double ll;
             for (int i = 0; i < len + 1; i++) {
                 for (int ii = 0; ii < len; ii++) {
                     txt.setText(txt.getText()+""+x[ii] + "*" + a[i][ii] + " ");
                     if (ii != len - 1)
                         txt.setText(txt.getText()+"+ ");
                 }
-                //ll=b[i]+y;
-                txt.setText(txt.getText()+"= " + c[i] +"\n");
+                txt.setText(txt.getText()+"= " + c[i]+"\n");
+            }
+            txt.setText(txt.getText()+"\n\n");
+            for (int i = 0; i < len + 1; i++) {
+                for (int ii = 0; ii < len; ii++) {
+                    txt.setText(txt.getText()+""+x[ii] + "*" + a[i][ii] + " ");
+                    if (ii != len - 1)
+                        txt.setText(txt.getText()+"+ ");
+                }
+                txt.setText(txt.getText()+"= " + c[i]+"\n");
             }
             txt.setText(txt.getText()+"\n\n");
 
@@ -112,8 +124,8 @@ public class MainActivity extends AppCompatActivity {
                 int suma=0;
                 //мутація, якщо потомство гірше предків
                 if (ser == 0)
-                    ser = sum / len;
-                else if (ser < sum / len) {
+                    ser = sum;
+                else if (ser <= sum) {
                     for (int i = 0; i < len; i++) {
                         a[i_max][i] = (int) (Math.random() * y / 2);
                         suma+=a[i_max][i]*x[i];
@@ -121,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
                     if(suma-y==0)
                         exit=i_max;
 
-                    /*
+
                     //------
                     System.out.println("Мутація:");
                     for (int i = 0; i < len + 1; i++) {
@@ -133,9 +145,9 @@ public class MainActivity extends AppCompatActivity {
                         System.out.println();
                     }
                     System.out.println();
-                    */
-                }
 
+                }
+                else ser=sum;
 
                 //схрещування
                 if (exit == 0) {
@@ -170,13 +182,21 @@ public class MainActivity extends AppCompatActivity {
                         int e = (int) (Math.random() * len - 1);
 
                         for (int ii = 0; ii <= e; ii++) {
-                            int zam = a[q][ii];
-                            a[q][ii] = a[w][ii];
-                            a[w][ii] = zam;
+                            a_a[i][ii] = a[w][ii];
                         }
+                        for (int ii = e+1; ii < len; ii++) {
+                            a_a[i][ii] = a[q][ii];
+                        }
+
+
                     }
 
-                    /*
+
+                    for (int i = 0; i < len + 1; i++)
+                        for (int ii = 0; ii < len; ii++) {
+                            a[i][ii]=a_a[i][ii];
+                        }
+
                     //-----------------------------------------------------------
                     System.out.println("Схрещування:");
                     for (int i = 0; i < len + 1; i++) {
@@ -188,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
                         System.out.println();
                     }
                     System.out.println();
-                    */
+
                 }
             }
         } while (exit == 0);
