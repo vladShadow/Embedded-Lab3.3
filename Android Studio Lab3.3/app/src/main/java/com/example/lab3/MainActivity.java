@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
         TextView txt = (TextView) findViewById(R.id.result);
         txt.setMovementMethod(new ScrollingMovementMethod());
-        txt.setText("Первое поколение:\n");
+        txt.setText("Перше покоління:\n");
 
 
         for (int i = 0; i < len + 1; i++) {
